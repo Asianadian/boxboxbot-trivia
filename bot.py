@@ -41,13 +41,14 @@ def get_chat(driver):
   except:
     user = "blocked user"
     msg = "message deleted by a moderator"
+  
+  print(user, msg)
 
   if msg_count < 150:
     msg_count += 1
   else:
     WebDriverWait(driver, 60).until(EC.staleness_of(first_msg))
   
-  return user, msg
 
 def is_question(user, text):
   return None
@@ -73,7 +74,6 @@ def main():
 
   #Twitch hates bots
   while True:
-    user, msg = get_chat(driver)
-    print(user, msg)
+    get_chat(driver)
 
 main()
