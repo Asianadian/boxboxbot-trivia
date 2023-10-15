@@ -19,17 +19,34 @@ def login(driver):
 
 def get_chat(driver):
   global msg_count
+
   try:
     last_msg = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.XPATH, "//div[@role='log']/*[%d]" % (msg_count))))
+    first_msg = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.XPATH, "//div[@role='log']/*[1]")))
   except:
     print('Disconnected due to inactivity')
     exit()
-  
-  if (last_msg.get_dom_attribute('class') != 'chat-line__message'):
-    return 'Non-message', ''
+  try:
+    if (last_msg.get_dom_attribute('class') != 'chat-line__message'):
+      if msg_count < 150:
+        msg_count += 1
+      return 'Non-message', ''
+  except: 
+    if msg_count < 150:
+      msg_count += 1
+    return 'Instantly deleted', ''
+  try:
+    user = last_msg.find_element(By.CLASS_NAME, 'chat-author__display-name').text
+    msg = last_msg.find_element(By.CLASS_NAME, 'text-fragment').text
+  except:
+    user = "blocked user"
+    msg = "message deleted by a moderator"
 
-  user = last_msg.find_element(By.CLASS_NAME, 'chat-author__display-name').text
-  msg = last_msg.find_element(By.CLASS_NAME, 'text-fragment').text
+  if msg_count < 150:
+    msg_count += 1
+  else:
+    WebDriverWait(driver, 60).until(EC.staleness_of(first_msg))
+  
   return user, msg
 
 def is_question(user, text):
@@ -52,12 +69,11 @@ def main():
   options.add_argument('--profile-directory=Profile 6')
   driver = webdriver.Chrome(options=options)
 
-  driver.get('https://www.twitch.tv/emilyywang')
+  driver.get('https://www.twitch.tv/imaqtpie')
 
   #Twitch hates bots
   while True:
     user, msg = get_chat(driver)
     print(user, msg)
-    msg_count += 1
 
 main()
