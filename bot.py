@@ -79,7 +79,12 @@ def main():
     user, msg = get_chat(driver)
     print(user, msg)
     if user == 'BoxBoxBot' and re.search('^.*:.*\?$', msg):
-      collection.insert_one({"question":msg, "answer":""})
+      QA = collection.find_one( {"question": msg})
+      if QA:
+        ans = QA['answer']
+        #some logic to send a chat with answer
+      else:
+        collection.insert_one({"question":msg, "answer":""})
     try:
       WebDriverWait(driver, 20).until(EC.staleness_of(WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.XPATH, "//div[@role='log']/*[1]")))))
     except:
