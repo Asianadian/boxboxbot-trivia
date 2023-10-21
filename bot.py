@@ -16,6 +16,10 @@ OPENAI_KEY = config('OPENAI_KEY')
 DB_USER = config('DB_USER')
 DB_PSWD = config('DB_PSWD')
 
+MONGO_CLUSTER = "bbbtrivia.82fvkwa.mongodb.net"
+MONGO_DATABASE = "bbbquestions"
+MONGO_COLLECTION = "questions"
+
 def login(driver):
   driver.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/nav/div/div[3]/div[3]/div/div[1]/div[1]/button').click()
   WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, 'login-username'))).send_keys(TTV_USER)
@@ -57,11 +61,11 @@ def main():
   global collection
 
   client = pymongo.MongoClient(
-  "mongodb+srv://%s:%s@bbbtrivia.82fvkwa.mongodb.net/?retryWrites=true&w=majority" % (DB_USER, DB_PSWD))
+  "mongodb+srv://%s:%s@%s/?retryWrites=true&w=majority" % (DB_USER, DB_PSWD, MONGO_CLUSTER))
 
-  db = client["bbbquestions"]
+  db = client[MONGO_DATABASE]
 
-  collection = db["questions"]   
+  collection = db[MONGO_COLLECTION]   
 
   options = webdriver.ChromeOptions()
   options.add_argument("--user-data-dir=C:\\Users\\danie\\AppData\\Local\\Google\\Chrome\\User Data")
