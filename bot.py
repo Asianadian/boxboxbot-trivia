@@ -72,13 +72,13 @@ def main():
   options.add_argument('--profile-directory=Profile 6')
   driver = webdriver.Chrome(options=options)
 
-  driver.get('https://www.twitch.tv/Thebausffs')
+  driver.get('https://www.twitch.tv/boxbox')
 
   #Twitch hates bots
   while True:
     user, msg = get_chat(driver)
     print(user, msg)
-    if user == 'BoxBoxBot' and re.search(r'^[.]:[.]?$', msg):
+    if user == 'BoxBoxBot' and re.search('^.*:.*\?$', msg):
       collection.insert_one({"question":msg, "answer":""})
     try:
       WebDriverWait(driver, 20).until(EC.staleness_of(WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.XPATH, "//div[@role='log']/*[1]")))))
